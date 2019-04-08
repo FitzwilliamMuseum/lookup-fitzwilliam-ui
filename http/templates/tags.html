@@ -1,0 +1,63 @@
+{% extends "page.html" %}
+{% from 'components.html' import paginator with context %}
+{% block title %}Tags{% endblock %}
+{% block content %}
+    <div class="row">
+        <h2 class="col-auto">Tags</h2>
+        <div class="col-auto">
+            <form id="tag-search-form" action="{{ url_for('web.tags') }}">
+                <div class="form-group dropdown">
+                    <div class="input-group">
+                        <input
+                            class="form-control"
+                            placeholder='Search tags'
+                            title="tag-search"
+                            type="text"
+                            name="query"
+                            id="tag-search"/>
+                        <div class="input-group-append">
+                            <button type="submit" id="tag-search-submit" class="btn btn-primary disabled">Search
+                            </button>
+                        </div>
+                    </div>
+                    <div class="list-group" id="tag-search-output"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row justify-content-end mb-3">
+        {{ paginator('web.tags', pagination) }}
+    </div>
+    <div class="row">
+        {% for tag in tags_data %}
+        <div class="col-md-6 mt-3">
+             <div class="card h-100">
+                 <div class="card-body">
+            <a
+                href="{{ url_for('web.tag', name=tag.name) }}"
+                class="text-truncate">
+                <span class="mr-0 badge badge-tag mt-1" title="{{ tag.description or '' }}">{{ tag.name }}
+                </span>
+                {% if user_info and tag.name not in user_info.tags | map(attribute = 'name') %}
+                    <span
+                        class="fas fa-user-plus add-user-tag text-muted mr-3 ml-3 pr-1 mt-1"
+                        data-user="{{ user_info.crsid }}"
+                        data-tag="{{ tag.name }}"
+                        title="Add to my tags!"></span>
+                {% endif %}
+                <span class="badge badge-secondary" title="{{ tag.count }} people tagged">{{ tag.count }}</span>
+
+            </a>
+            {% if tag.description %}
+            <br />
+            <span class="mt-2">{{ tag.description }}</span>
+            {% endif %}
+            </div>
+            </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="row justify-content-end mt-3">
+        {{ paginator('web.tags', pagination) }}
+    </div>
+{% endblock %}

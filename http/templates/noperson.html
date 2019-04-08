@@ -1,0 +1,48 @@
+{% extends "page.html" %}
+{% block title %}
+    Lookup.Fitzwilliam: ({{ person_data.crsid }}) not found 
+{% endblock %}
+{% block content %}
+    <div id="person-info" data-crsid="{{ person_data.crsid }}">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <div>
+                    <h3>Person not found! 😞</h3>
+                    <code class="lead">{{ person_data.crsid }}</code>
+                </div>
+            </div>
+            <div class="card-body">
+                <p>No profile was found for the CRSid
+                    <code>{{ person_data.crsid }}</code>.</p>
+                {% if get_current_user() == person_data.crsid or get_current_user() in admins %}
+                    {% if person_data.crsid == get_current_user() %}
+                        <p>This is your CRSid! Choose an action:</p>
+                    {% else %}
+                        <p>You have administrative rights! Choose an action:</p>
+                    {% endif %}
+                    <div class="row my-3">
+                        <div class="col-5">
+                            <h4>
+                                Import
+                                {{ 'my' if person_data.crsid == get_current_user() }}
+                                data from lookup.cam
+                                {{ '(Physics only)' if person_data.crsid == get_current_user() }}
+                            </h4>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-primary new-profile" id="import-profile" name="create" value="import">
+                                Import data
+                            </button>
+                        </div>
+                    </div>
+                {% else %}
+                    <p>Please contact
+                        <code>
+                            <a href="mailto:it.helpdesk@phy.cam.ac.uk" class="text-danger">it.helpdesk@phy.cam.ac.uk</a>
+                        </code>
+                        or the person associated with that CRSid if you think there should be a profile here.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

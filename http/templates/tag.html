@@ -1,0 +1,68 @@
+{% extends "page.html" %}
+{% from 'components.html' import paginator with context %}
+{% from 'components.html' import list_people with context %}
+{% block title %}
+    Lookup.Fitzwilliam:
+    {{ tag.name }}
+{% endblock %}
+{% block content %}
+    <div class="row justify-content-between mb-3">
+        <form class="single-value-property col-10" id="tag-info" data-tag="{{ tag|tojson|forceescape }}">
+            <div class="input-group ml-3">
+                <a
+                    href="{{ url_for('web.tag', name=tag.name) }}"
+                    class="btn btn-tag btn-primary my-2 btn-lg content-editable font-weight-bold"
+                    data-tag="{{ tag.name }}"
+                    data-mode="view"
+                    contenteditable="false">
+                    {{ tag.name }}
+                </a>
+                {% if user_info and tag.name not in user_info.tags | map(attribute = 'name') %}
+                    <span
+                        class="fas fa-user-plus add-user-tag text-muted form-control-lg mt-3 ml-2"
+                        data-user="{{ user_info.crsid }}"
+                        data-tag="{{ tag.name }}"
+                        title="Add to my tags!"></span>
+                {% endif %}
+            </div>
+            <div class="input-group ml-3 editable-field">
+                <input
+                    type="text"
+                    class="form-control-plaintext form-control form-control-lg font-weight-bold"
+                    id="input-tag-description"
+                    placeholder="Tag description"
+                    value="{{ tag.description }}"
+                    data-mode="view"
+                    size="40"
+                    readonly="readonly"/>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-dark">Update</button>
+                </div>
+            </div>
+        </form>
+        {% if get_current_user() in admins %}
+            <div class="my-3">
+              <button type="button" name="button" class="btn btn-dark">
+                <a class="h4 mx-3 text-center" id="edit-toggle" data-mode="view">
+                    <span class="fas fa-edit"></span>&nbsp;Edit</a>
+                </button>
+            </div>
+        {% endif %}
+    </div>
+    <div class="row justify-content-end mb-3">
+        {{ paginator('web.tag', pagination) }}
+    </div>
+    {% if tag_people %}
+        {{ list_people(tag_people) }}
+    {% else %}
+        <div>
+            <a href="{{ url_for('web.tags') }}" class="text-center">
+                <h5>No Results
+                </h5>
+            </a>
+        </div>
+    {% endif %}
+    <div class="row justify-content-end mt-3">
+        {{ paginator('web.tag', pagination) }}
+    </div>
+{% endblock %}

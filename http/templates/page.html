@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block head %}
+            <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+            <title>
+                {% block title %}Fitzwilliam Museum: Lookup{% endblock %}
+            </title>
+            <script
+                src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+                crossorigin="anonymous"></script>
+            <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+            <link href='https://fonts.googleapis.com/css?family=Lato:b,r' rel='stylesheet'/>
+            <link href="{{ url_for('static', filename='css/lookup.min.css') }}" rel="stylesheet"/>
+            <link
+                rel="stylesheet"
+                href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"
+                integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+                crossorigin="anonymous"/>
+            <link
+                rel="shortcut icon"
+                href="{{ url_for('static', filename='img/favicon.ico') }}"
+                />
+            <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet"/>
+            <link href="{{ url_for('static', filename='css/site.css') }}" rel="stylesheet"/>
+
+
+        {% endblock %}
+    </head>
+    <body class="bg-light">
+        {% block header %}
+            <header>
+                <nav class="navbar navbar-expand-md navbar-dark fixed-top navbar-black">
+                    <a class="navbar-brand" href="{{ url_for('web.index') }}">
+
+                        <strong>LOOKUP</strong>.fitzmuseum
+                    </a>
+                    <button
+                        class="navbar-toggler"
+                        type="button"
+                        data-toggle="collapse"
+                        data-target="#navbar-content"
+                        aria-controls="navbar-content"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbar-content">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="https://Intranet.fitzmuseum.cam.ac.uk" title="Intranet">Intranet</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('web.people') }}" title="People">People</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('web.tags') }}" title="Tags">Tags</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('web.rooms') }}" title="Rooms">Rooms</a>
+                            </li>
+                        </ul>
+                        {% if get_current_user() %}
+                            <ul class="navbar-nav">
+                                <li
+                                    class="nav-item"
+                                    {% if user_info %}
+                                    id="user-info"
+                                    data-user-info="{{ user_info|tojson|forceescape }}"
+                                    {% endif %}>
+                                    <a
+                                        class="nav-link"
+                                        href="{{ url_for('web.person', crsid=get_current_user()) }}"
+                                        title="My profile page">Profile ({{ get_current_user() }})</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('web.logout') }}" title="Logout current user">Logout</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('web.settings') }}" title="Settings">
+                                        <span class="fas fa-cog"></span></a>
+                                </li>
+                            </ul>
+                            <form
+                                class="form-inline navbar-nav nav-item"
+                                id="quick-search-form"
+                                action="{{ url_for('web.people') }}">
+                                <div class="form-group dropdown">
+                                    <input
+                                        class="form-control"
+                                        title="quick-search"
+                                        placeholder="Quick Search"
+                                        type="text"
+                                        name="query"
+                                        id="quick-search"
+                                        data-toggle="dropdown"/>
+                                    <input type="hidden" name="fuzzy" value="true"/>
+                                    <div id="quick-search-output"></div>
+                                </div>
+                            </form>
+                        {% else %}
+                            <ul class="navbar-nav">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ url_for('web.login') }}">Login</a>
+                                </li>
+                            </ul>
+                            <div class="form-inline">
+                                <div class="form-control text-center">
+                                    <a class="text-dark" href="{{ url_for('web.login') }}">Login to search</a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </nav>
+            </header>
+        {% endblock %}
+        {% block jumbotron %}
+
+        {% endblock jumbotron %}
+        <main role="main" class="container mt-5 pt-5 mb-2 pb-3">
+            {% block content %}
+                <p>No content</p>
+            {% endblock content %}
+        </main>
+        {% block footer %}
+        <div class="bg-white p-2">
+            <div class="row mx-auto">
+                <div class="mx-auto mt-3 " id="sponsors">
+                    <a href="http://www.museums.cam.ac.uk"><img class="img-responsive"
+                                                                alt="University of Cambridge Museums logo"
+                                                                src="{{ url_for('static', filename='img/logos/ucm_logo_black_white.png') }}"
+                    ></a>
+                    <a href="http://www.artscouncil.org.uk/what-we-do/raising-standards/designation-scheme/"><img
+                            class="img-responsive" alt="Designation scheme Logo"
+                            src="{{ url_for('static', filename='/img/logos/designation.png') }}"
+                    ></a>
+                    <a href="http://www.artscouncil.org.uk/what-we-do/supporting-museums/accreditation-scheme/"><img
+                            class="img-responsive" alt="Accredited Museum status logo"
+                            src="{{ url_for('static', filename='/img/logos/accredited.png') }}"
+                    ></a>
+                    <a href="http://www.cambridge.gov.uk/"><img class="img-responsive" alt="Cambridge City Council Logo"
+                                                                src="{{ url_for('static', filename='img/logos/camcity_logo.png') }}"
+                    ></a>
+                    <a href="http://www.artscouncil.org.uk/"><img
+                            class="img-responsive" alt="Arts Council England Logo" src="{{ url_for('static', filename='img/logos/ace.png') }}"
+                    ></a>
+                    <a href="https://re.ukri.org/"><img class="img-responsive" alt="Research England logo"
+                                                        src="{{ url_for('static', filename='img/logos/research_england.png') }}"
+                    ></a>
+
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-white">
+
+            <div class="container ">
+                <div class="row">
+                    <div class="col-sm mt-2 mb-2 border-right border-white">
+                        <h4>Contact us</h4>
+                        <p>
+                            The Fitzwilliam Museum,<br/>
+                            Trumpington Street,<br/>
+                            Cambridge<br/>
+                            CB2 1RB<br/>
+                            Tel: +44 (0)1223 332900
+                        </p>
+                    </div>
+                    <div class="col-sm mt-2 mb-2 border-right border-white ">
+                        <h4>Useful links</h4>
+
+                        <ul class="share">
+                            <li><a href="https://www.museums.cam.ac.uk/">University of Cambridge Museums</a></li>
+                            <li><a href="https://www.fitzmuseum.cam.ac.uk/aboutus/support">Support the Fitz</a></li>
+                            <li><a href="https://www.fitzmuseum.cam.ac.uk/website/tou">Website Terms of Use</a></li>
+                            <li><a href="https://www.fitzmuseum.cam.ac.uk/website/cookiepolicy">Privacy and cookies</a></li>
+                            <li><a href="https://www.fitzmuseum.cam.ac.uk/website/cookiepolicy">Accessibility</a></li>
+                            <li><a href="https://www.registrarysoffice.admin.cam.ac.uk/governance-and-strategy/anti-slavery-and-anti-trafficking"
+                                   title="Modern Slavery Act statement of compliance">Modern Slavery Act Statement</a>
+
+                        </ul>
+                    </div>
+                    <div class="col-sm mt-2 mb-2 border-dotted border-right border-white ">
+                        <h4>Talk to us</h4>
+                        <p class="share">
+                            <a href="https://twitter.com/FitzMuseum_UK"><i class="fab fa-twitter fa-2x p-2"></i></a>
+                            <a href="https://www.instagram.com/fitzmuseum_uk"><i class="fab fa-instagram fa-2x  p-2"></i></a>
+                            <a href="https://www.facebook.com/fitzwilliammuseum/"><i class="fab fa-facebook fa-2x p-2"></i></a>
+                            <a href="https://www.github.com/fitzwilliammuseum/"><i
+                                    class="fab fa-github fa-2x p-2"></i></a>
+                        </p>
+                        <h4>Watch and listen</h4>
+                        <p class="share">
+                            <a href="https://www.youtube.com/channel/UCFwhw5uPJWb4wVEU3Y2nScg"><i
+                                    class="fab fa-youtube fa-2x p-2"></i></a>
+                        </p>
+                    </div>
+                    <div class="col-sm mt-2 mb-2">
+                        <a href="https://www.fitzmuseum.cam.ac.uk"><img src="{{ url_for('static', filename='img/logos/FitzwilliamLogoFooter.png') }}" class="rounded d-block"/></a>
+                        <p class="share">
+                            &copy; 2018 The University of Cambridge<br/>
+                            Content: <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND</a><br />
+                            Code: <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#0" class="cd-top js-cd-top">Top</a>
+
+        </footer>
+        {% endblock %}
+        {% block bootstrap %}
+            <script
+                src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+                integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+                crossorigin="anonymous"></script>
+            <script
+                src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
+                integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+                crossorigin="anonymous"></script>
+            <script
+                src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.1/markdown-it.js"
+                integrity="sha256-8q4KkJo+qo008C39XicdTM0vprJWCicBwOF+Z58XNHM="
+                crossorigin="anonymous"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+                <script src="{{ url_for('static', filename='js/material.min.js') }}"></script>
+                <!-- Back to top script -->
+                <script src="{{ url_for('static', filename='js/backtotop.js') }}"></script>
+                <!-- Add feedback form -->
+                <script id="zammad_form_script" src="https://helpdesk.fitzmuseum.cam.ac.uk/assets/form/form.js"></script>
+                <script src="{{ url_for('static', filename='js/feedback.js') }}"></script>
+                <!-- Cookie management -->
+                <script defer type="text/javascript" src="{{ url_for('static', filename='js/config.js') }}"></script>
+                <script defer type="text/javascript" src="{{ url_for('static', filename='js/klaro.js') }}"></script>
+                <!-- End of body -->
+
+        {% endblock %}
+    </body>
+</html>

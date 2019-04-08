@@ -1,0 +1,87 @@
+{% extends "page.html" %}
+{% macro agent_glyph(user_agent) %}
+    {% if user_agent.browser == "opera" %}
+        <span class="fab fa-opera" title="Chrome"></span>
+    {% elif user_agent.browser == "edge" %}
+        <span class="fab fa-edge" title="Edge"></span>
+    {% elif user_agent.browser == "chrome" %}
+        <span class="fab fa-chrome" title="Chrome"></span>
+    {% elif user_agent.browser == "firefox" %}
+        <span class="fab fa-firefox" title="Firefox"></span>
+    {% elif user_agent.browser == "safari" %}
+        <span class="fab fa-safari" title="Safari"></span>
+    {% elif user_agent.browser == "msie" %}
+        <span class="fab fa-internet-explorer" title="Internet Explorer"></span>
+    {% else %}
+        <span class="fas fa-code" title="{{ user_agent.browser }}"></span>
+    {% endif %}
+    {% if user_agent.platform in["iphone", "ipad", "macos"] %}
+        <span class="fab fa-apple" title="Apple {{ user_agent.platform }}"></span>
+    {% elif user_agent.platform == "windows" %}
+        <span class="fab fa-windows" title="Windows"></span>
+    {% elif user_agent.platform == "linux" %}
+        <span class="fab fa-linux" title="Linux"></span>
+    {% elif user_agent.platform == "android" %}
+        <span class="fab fa-android" title="Android"></span>
+    {% else %}
+        <span class="fas fa-laptop" title="{{ user_agent.platform }}"></span>
+    {% endif %}
+{% endmacro %}
+{% block title %}
+    Settings for
+    {{ get_current_user() }}
+{% endblock %}
+{% block content %}
+    <div id="user-settings" data-user="{{ get_current_user() }}">
+        <h2>Settings for
+            {{ get_current_user() }}</h2>
+        <div class="row multi-property-list my-3">
+            <div class="col-sm-3 attr-label">
+                Active Sessions
+            </div>
+            <div class="col-sm-9 itemised-properties">
+                {% for user_session in user_sessions %}
+                    <div class="d-flex active-session">
+                        <div class="mx-2">{{ agent_glyph(user_session.agent) -}}</div>
+                        <div class="mx-2">Last seen:
+                            {{ user_session.active.strftime("%c") }}</div>
+                        <div class="mx-2">
+                            <a
+                                href="#"
+                                class="badge badge-danger session-logout"
+                                title="logout session"
+                                data-session-key="{{ user_session.key }}"
+                                data-this-session="{{ (session.session_key == user_session.key)|lower }}">logout</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% if get_current_user() in admins %}
+            <div class="row multi-property-list my-3">
+                <div class="col-sm-3 attr-label">
+                    API Keys
+                    <a href="#" class="mx-2 badge badge-success api-key-generate">Generate new key</a>
+                </div>
+                <div class="col-sm-9 itemised-properties" id="api-keys">
+                    {% for api_key in api_keys %}
+                        <div class="d-flex active-session">
+                            <div class="mx-2">
+                                <code>{{ api_key.key }}</code>
+                            </div>
+                            <div class="mx-2">Last seen:
+                                {{ api_key.active.strftime("%c") }}</div>
+                            <div class="mx-2">
+                                <a
+                                    href="#"
+                                    class="badge badge-danger session-logout"
+                                    title="logout session"
+                                    data-session-key="{{ api_key.key }}">logout</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

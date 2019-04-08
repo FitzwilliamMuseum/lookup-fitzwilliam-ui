@@ -1,0 +1,84 @@
+@import "bootstrap-it";
+
+/* BETA TRIANGLE ABOVE EVERYTHING */
+#beta-triangle {
+  position: fixed;
+  border-bottom: 7rem solid theme-color("tag-dark");
+  border-left: 9rem solid transparent;
+  width: 0;
+  height: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 99998;
+}
+
+#beta-text a {
+  position: fixed;
+  z-index: 99999;
+  bottom: 0;
+  right: 1rem;
+  color: theme-color("light") !important;
+  text-decoration: none !important;
+}
+
+.hide-on-view[data-mode="view"], [data-mode="view"] > .hide-on-view {
+  display: none;
+}
+
+/* Use darkening of links to show interaction for fontawesome icons */
+a.fas {
+  opacity: 0.75;
+}
+
+a.fas:hover {
+  text-decoration: none;
+  opacity: 1;
+}
+
+/* active links for linked services */
+.chat-link {
+  background: url('/static/img/chat.png') no-repeat 0.2em center;
+}
+
+.chat-link:hover {
+  background: theme-color("tag") url('/static/img/chat-night.png') no-repeat 0.2em center;
+}
+
+.gitlab-link {
+  background: url('/static/img/codeshare.png') no-repeat 0.2em center;
+}
+
+.gitlab-link:hover {
+  background: theme-color("tag") url('/static/img/codeshare-night.png') no-repeat 0.2em center;
+}
+
+.chat-link, .gitlab-link {
+  background-size: 1.4rem;
+  vertical-align: middle;
+  padding: .5rem .75rem;
+  color: theme-color("tag");
+  border-radius: 0.25rem;
+}
+
+.chat-link:hover, .gitlab-link:hover {
+  background-size: 1.4rem;
+  vertical-align: middle;
+  color: color-yiq(theme-color("tag"));
+  text-decoration: none;
+}
+
+.chat-link:before {
+  content: 'chat';
+  font-weight: bold;
+  margin-left: 1rem;
+}
+
+.gitlab-link:before {
+  content: 'codeshare';
+  font-weight: bold;
+  margin-left: 1rem;
+}
+
+.chat-link:after, .gitlab-link:after {
+  content: '.phy'
+}

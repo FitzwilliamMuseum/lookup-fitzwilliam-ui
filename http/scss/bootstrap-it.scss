@@ -1,0 +1,65 @@
+// bootstrap-it.scss
+// IT Services derivative of bootstrap
+
+$theme-colors: (
+  "tag": #422e5d,
+  "tag-dark": #503872,
+  "room": #ffd700,
+  "status": #b0f0f0,
+);
+
+$font-family-sans-serif:
+  // IT services have settled on Lato
+  Lato,
+  // Safari for OS X and iOS (San Francisco)
+  -apple-system,
+  // Chrome < 56 for OS X (San Francisco)
+  BlinkMacSystemFont,
+  // Windows
+  "Segoe UI",
+  // Android
+  "Roboto",
+  // Basic web fallback
+  "Helvetica Neue", Arial, sans-serif,
+  // Emoji fonts
+  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
+
+@import "../../../node_modules/bootstrap/scss/bootstrap";
+
+
+@each $color, $value in $theme-colors {
+  .custom-#{$color} {
+    color: color-yiq($value);
+    border-color: $value;
+    background-color: $value;
+
+    // Acts like a button when activated
+    &:focus,
+    &.focus {
+      border-color: darken($value, 10%);
+      background-color: darken($value, 5%);
+      // Avoid using mixin so we can pass custom focus shadow properly
+      @if $enable-shadows {
+        box-shadow: $btn-box-shadow, 0 0 0 $btn-focus-width rgba($value, .5);
+      } @else {
+        box-shadow: 0 0 0 $btn-focus-width rgba($value, .5);
+      }
+    }
+
+    // no arrow if disabled
+    &:disabled,
+    &[readonly],
+    [data-mode="view"] {
+      color: color-yiq($value);
+      background: $value;
+      box-shadow: none;
+      border-color: $value;
+    }
+  }
+}
+
+.badge-lg {
+  font-size: 1rem;
+  line-height: 1.1;
+  border-radius: 0.4rem;
+}

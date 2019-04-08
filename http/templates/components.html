@@ -1,0 +1,149 @@
+{% macro paginator(endpoint, pagination) %}
+    {% if pagination.options.sorts %}
+        <div class="mx-1">
+            <select class="custom-select custom-select-sm select-href" title="Sort Results">
+                <option >Sort by</option>
+                {% for sort, sort_text in pagination.options.sorts %}
+                    <option
+                        value="{{ sort }}"
+                        href="{{ url_for(endpoint, **pagination_args(pagination, sort=sort)) }}"
+                        {{ "selected" if sort == pagination.sort }}>
+                        {{ sort_text }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    {% endif %}
+    {% if pagination.options.limits %}
+        <div class="mx-1">
+            <select class="custom-select custom-select-sm select-href" title="Results per page">
+                {% for limit in pagination.options.limits %}
+                    <option
+                        value="{{ limit }}"
+                        href="{{ url_for(endpoint, **pagination_args(pagination, limit=limit)) }}"
+                        {{ "selected" if limit == pagination.limit }}>
+                        {{ limit }}
+                        per page
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    {% endif %}
+    <ul class="pagination pagination-sm mb-0">
+        {% if 'first' in pagination %}
+            <li class="page-item">
+                <a
+                    class="page-link"
+                    href="{{ url_for(endpoint, **pagination_args(pagination, offset=pagination.first)) }}"
+                    aria-label="First">
+                    <span>First</span>
+                </a>
+            </li>
+        {% endif %}
+        {% if 'prev' in pagination %}
+            <li class="page-item">
+                <a
+                    class="page-link"
+                    href="{{ url_for(endpoint, **pagination_args(pagination, offset=pagination.prev)) }}"
+                    aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+        {% endif %}
+        {% for page, page_offset in pagination.all_pages %}
+            <li
+                class="d-none d-md-block page-item  {% if pagination.active_page == page %}active d-sm-block{% endif %}">
+                <a
+                    class="page-link"
+                    href="{{ url_for(endpoint, **pagination_args(pagination, offset=page_offset)) }}">
+                    {{ page }}
+                </a>
+            </li>
+        {% endfor %}
+        {% if 'next' in pagination %}
+            <li class="page-item">
+                <a
+                    class="page-link"
+                    href="{{ url_for(endpoint, **pagination_args(pagination, offset=pagination.next)) }}"
+                    aria-label="Previous">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Previous</span>
+                </a>
+            </li>
+        {% endif %}
+        {% if 'last' in pagination %}
+            <li class="page-item">
+                <a
+                    class="page-link"
+                    href="{{ url_for(endpoint, **pagination_args(pagination, offset=pagination.last)) }}"
+                    aria-label="Last">
+                    <span>Last</span>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+{% endmacro %}
+{# Lists of people used anywhere #}
+{% macro list_people(people_data) %}
+    <ul class="list-group">
+        {% for person in people_data %}
+            <a
+                href="{{ url_for('web.person', crsid=person.crsid) }}"
+                class="list-group-item list-group-item-action align-items-start d-flex flex-row">
+                <div class="mr-3 p-0 thumbnail-container text-center align-middle">
+                    {% if person.thumbnail %}
+                        <img class="thumbnail-image rounded" src="data:image/png;base64, {{ person.thumbnail }}"/>
+                    {% else %}
+                        <span class="fas fa-user-astronaut thumbnail-image"></span>
+                    {% endif %}
+                </div>
+                <div class="flex-fill">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ person.display_name }}</h5>
+                        <code>{{ person.crsid }}</code>
+                    </div>
+                    <div class="d-flex w-100 justify-content-between">
+                        <div>
+                            {% for tag in person.tags %}
+                                <span
+                                    class="badge badge-tag mt-1 mr-1"
+                                    data-tag="{{ tag.name }}"
+                                    href="{{ url_for('web.tag', name=tag.name) }}"
+                                    title="{{ tag.description or '' }}">
+                                    {{ tag.name }}
+                                </span>
+                            {% endfor %}
+                            {% for room in person.rooms %}
+                                <span
+                                    class="badge badge-room mt-1 mr-1"
+                                    data-item="{{ room|tojson|forceescape }}"
+                                    {% if room.description %}
+                                    title="{{ room.description }}"
+                                    {% endif %}
+                                    href="{{ url_for('web.room', identifier=room.identifier) }}">
+                                    {% if room.building and room.number %}
+                                        {{ room.building }}
+                                        -
+                                        {{ room.number }}
+                                    {% elif room.number %}
+                                        {{ room.number }}
+                                    {% else %}
+                                        {{ room.building }}
+                                    {% endif %}
+                                </span>
+                            {% endfor %}
+                        </div>
+                        <div class="text-right">
+                            {% for status in person.status %}
+                                <span class="badge badge-status" data-status="{{ status.name }}" title="{{ status.name or '' }}">
+                                    {{ status.name }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </ul>
+{% endmacro %}

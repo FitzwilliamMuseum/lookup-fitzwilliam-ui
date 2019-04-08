@@ -1,0 +1,51 @@
+{% extends "page.html" %}
+{% from 'components.html' import paginator with context %}
+{% from 'components.html' import list_people with context %}
+{% block title %}
+    Lookup.Fitzwilliam:
+    {{ rooms_meta.name }}
+    building
+{% endblock %}
+{% block content %}
+    <h2>
+        {{ rooms_meta.name }}
+    </h2>
+    <div class="row">
+        <div class="col-sm-3">
+            <h3>Rooms</h3>
+            <ul class="list-inline text-center p-3">
+                {% for room in rooms %}
+                    <a
+                        href="{{ url_for('web.room', identifier=room.identifier) }}"
+                        class="list-inline-item badge badge-room my-1"
+                        {% if room.description %}
+                        title="{{ room.description }}"
+                        {% endif %}
+                        data-mode="view"
+                        data-item="{{ room|tojson|forceescape }}">
+                        {{ room.number }}
+                    </a>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-sm-9">
+            <h3>People</h3>
+            <div class="row justify-content-end mb-3">
+                {{ paginator('web.building', pagination) }}
+            </div>
+            {% if people %}
+                {{ list_people(people) }}
+            {% else %}
+                <div>
+                    <a href="{{ url_for('web.rooms') }}" class="text-center">
+                        <h5>No Results
+                        </h5>
+                    </a>
+                </div>
+            {% endif %}
+            <div class="row justify-content-end mt-3">
+                {{ paginator('web.building', pagination) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

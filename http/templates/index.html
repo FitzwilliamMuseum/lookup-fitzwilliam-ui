@@ -1,0 +1,118 @@
+{% extends "page.html" %}
+{% block jumbotron %}
+<div class="jumbotron jumbotron-fluid mb-5 doc-jumbotron head">
+    <div class="container">
+        <div class="row ">
+          <div class="col-lg-12 col-xl-12 ">
+              <a href="https://fitzmuseum.cam.ac.uk"><img src="{{ url_for('static', filename='/img/logos/rainbow.png') }}" class="align-self-center mr-3 float-left thumb-post bg-white p-3 shadow-lg"></a>
+          </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+
+    <div class="col-lg-5 mx-auto">
+        <h2 class="text-center">Search people and tags</h2>
+        {% if get_current_user() %}
+            <form id="omni-search-form" action="{{ url_for('web.people') }}">
+                <div class="form-group">
+                    <div class="input-group">
+                        <input
+                            class="form-control"
+                            placeholder='Search'
+                            title="omni-search"
+                            type="text"
+                            name="query"
+                            id="omni-search"
+                            autofocus="autofocus"/>
+                        <input type="hidden" name="fuzzy" value="true"/>
+                        <div class="input-group-append">
+                            <button type="submit" id="omni-search-submit" class="btn btn-primary disabled">Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        {% else %}
+            <a class="form-control text-center text-dark" href="{{ url_for('web.login') }}">Login to search</a>
+        {% endif %}
+    </div>
+    <div class="col-lg-7 mx-auto my-3">
+        <div class="list-group" id="omni-search-output"></div>
+    </div>
+    <h4 class="col-lg-8 mx-auto">Trending</h4>
+    <div class="col-lg-8 row mx-auto justify-content-center" id="trending-tags">
+        {% for tag in tags_trending %}
+            <div class="p-1 text-center hidden-interact">
+                <a
+                    class="badge badge-tag badge-lg"
+                    data-tag="{{ tag.name }}"
+                    href="{{ url_for('web.tag', name=tag.name) }}"
+                    title="{{ tag.description or '' }}">
+                    {{ tag.name }}
+                    <span class="badge badge-secondary ml-3" title="{{ tag.count }} people tagged">{{ tag.count }}</span>
+                </a>
+                {% if user_info and tag.name not in user_info.tags | map(attribute = 'name') %}
+                    <div class="hidden-interact-popup">
+                        <span
+                            class="fas fa-user-plus add-user-tag text-muted mr-3 pr-1"
+                            data-user="{{ user_info.crsid }}"
+                            data-tag="{{ tag.name }}"
+                            title="Add to my tags!"></span>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <hr class="col-lg-8 mx-auto"/>
+    <h4 class="col-lg-8 mx-auto">New</h4>
+    <div class="col-lg-8 row mx-auto justify-content-center" id="new-tags">
+        {% for tag in tags_new %}
+            <div class="p-1 text-center hidden-interact">
+                <a
+                    class="badge badge-tag badge-lg"
+                    data-tag="{{ tag.name }}"
+                    href="{{ url_for('web.tag', name=tag.name) }}"
+                    title="{{ tag.description or '' }}">
+                    {{ tag.name }}
+                    <span class="badge badge-secondary  ml-3" title="{{ tag.count }} people tagged">{{ tag.count }}</span>
+                </a>
+                {% if user_info and tag.name not in user_info.tags | map(attribute = 'name') %}
+                    <div class="hidden-interact-popup">
+                        <span
+                            class="fas fa-user-plus add-user-tag text-muted mr-3 pr-1"
+                            data-user="{{ user_info.crsid }}"
+                            data-tag="{{ tag.name }}"
+                            title="Add to my tags!"></span>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <hr class="col-lg-8 mx-auto"/>
+    <h4 class="col-lg-8 mx-auto">Top</h4>
+    <div class="col-lg-8 row mx-auto justify-content-center" id="top-tags">
+        {% for tag in tags_top %}
+            <div class="p-1 text-center hidden-interact">
+                <a
+                    class="badge badge-tag badge-lg"
+                    data-tag="{{ tag.name }}"
+                    href="{{ url_for('web.tag', name=tag.name) }}"
+                    title="{{ tag.description or '' }}">
+                    {{ tag.name }}
+                    <span class="badge badge-secondary ml-3" title="{{ tag.count }} people tagged">{{ tag.count }}</span>
+                </a>
+                {% if user_info and tag.name not in user_info.tags | map(attribute = 'name') %}
+                    <div class="hidden-interact-popup">
+                        <span
+                            class="fas fa-user-plus add-user-tag text-muted mr-3 pr-1"
+                            data-user="{{ user_info.crsid }}"
+                            data-tag="{{ tag.name }}"
+                            title="Add to my tags!"></span>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

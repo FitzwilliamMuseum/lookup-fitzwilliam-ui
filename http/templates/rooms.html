@@ -1,0 +1,78 @@
+{% extends "page.html" %}
+{% from 'components.html' import paginator with context %}
+{% block title %}Rooms{% endblock %}
+{% block content %}
+    <h2>Buildings</h2>
+    <ul class="list-inline text-center">
+        {% for building in all_buildings %}
+            <a
+                href="{{ url_for('web.building', name=building) }}"
+                class="list-inline-item btn btn-room btn-wine my-1 room">{{ building }}</a>
+        {% endfor %}
+    </ul>
+    <div class="row">
+        <h2 class="col-auto">Rooms</h2>
+        <div class="col-auto">
+            <form id="room-search-form" action="{{ url_for('web.rooms') }}">
+                <div class="form-group dropdown">
+                    <div class="input-group">
+                        <input
+                            class="form-control"
+                            placeholder='Search rooms'
+                            title="room-search"
+                            type="text"
+                            name="query"
+                            id="room-search"/>
+                        <div class="input-group-append">
+                            <button type="submit" id="room-search-submit" class="btn btn-primary disabled">Search
+                            </button>
+                        </div>
+                    </div>
+                    <div class="list-group" id="room-search-output"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row justify-content-end mb-3">
+        {{ paginator('web.rooms', pagination) }}
+    </div>
+    <div class="row">
+        {% for room in rooms_data %}
+        <div class="col-md-6 mt-3">
+             <div class="card h-100">
+                 <div class="card-body">
+            <a
+                href="{{ url_for('web.room', identifier=room.identifier) }}"
+                class="text-truncate">
+                <span class="badge badge-primary">
+                    {% if room.building and room.number %}
+                        {{ room.building }}
+                        -
+                        {{ room.number }}
+                    {% elif room.number %}
+                        {{ room.number }}
+                    {% else %}
+                        {{ room.building }}
+                    {% endif %}
+                </span>
+                {% if user_info and room.identifier not in user_info.rooms | map(attribute = 'identifier') %}
+                    <span
+                        class="fas fa-user-plus add-user-room text-muted ml-3 mr-3 pr-1"
+                        data-user="{{ user_info.crsid }}"
+                        data-room-identifier="{{ room.identifier }}"
+                        title="Add to my rooms!"></span>
+                {% endif %}
+            </a>
+            {% if room.description %}
+            <br/>
+                <span class="ml-1">{{ room.description }}</span>
+            {% endif %}
+            </div>
+            </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="row justify-content-end mt-3">
+        {{ paginator('web.rooms', pagination) }}
+    </div>
+{% endblock %}

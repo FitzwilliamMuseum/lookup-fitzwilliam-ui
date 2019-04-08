@@ -1,0 +1,106 @@
+{% extends "page.html" %}
+{% from 'components.html' import paginator with context %}
+{% from 'components.html' import list_people with context %}
+{% block title %}
+    Lookup.Fitzwilliam:
+    {% if room.building %}
+        {{ room.building }}
+        -
+        {{ room.number }}
+    {% else %}
+        {{ room.number }}
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <div class="row">
+      {% if get_current_user() in admins %}
+          <div class="my-3 col-2" data-mode="view">
+              <div class="text-center">
+                <button class="btn btn-dark">
+                  <a id="edit-toggle" data-mode="view">
+                      <span class="fas fa-edit"></span>&nbsp;Edit</a>
+                </button>
+              </div>
+              <br/>
+              <div class="text-center hide-on-view">
+                  <button
+                      id="delete-room-btn"
+                      class="btn btn-danger"
+                      data-mode="view"
+                      data-identifier="{{ room.identifier }}">Delete</button>
+              </div>
+          </div>
+      {% endif %}
+    </div>
+    <div class="row justify-content-between mb-3">
+        <form class="col-10" id="room-info" data-room="{{ room|tojson|forceescape }}">
+            <div class="form-inline">
+                <div class="input-group ml-3 mb-2" id="room-input" data-mode="view">
+                    <select
+                        class="custom-select custom-room disable-able font-weight-bold col"
+                        id="room-building-select"
+                        title="room-building-select"
+                        disabled="disabled">
+                        {% for building in[""] + all_buildings %}
+                            <option value="{{ building }}" {{ 'selected="selected"' if building == room.building }}>{{ building }}</option>
+                        {% endfor %}
+                    </select>
+                    <input
+                        class="form-control form-control-plaintext custom-room font-weight-bold xpander pl-2 col"
+                        title="room-number"
+                        placeholder="Room Number"
+                        name="number"
+                        id="room-number-input"
+                        type="text"
+                        value="{{ room.number }}"
+                        data-mode="view"
+                        readonly="readonly"/>
+                </div>
+                {% if room.floor %}
+                    <a
+                        class="fas fa-map-marked-alt text-muted form-control-lg form-control-inline"
+                        href="{{ url_for('web.maps', identifier=room.identifier, building=room.building,
+                                         floor=room.floor, longitude=room.longitude, latitude=room.latitude) }}"
+                        title="View room on a map!"></a>
+                {% endif %}
+                {% if user_info and room.identifier not in user_info.rooms | map(attribute = 'identifier') %}
+                    <span
+                        class="fas fa-user-plus add-user-room text-muted form-control-lg form-control-inline ml-3"
+                        data-user="{{ user_info.crsid }}"
+                        data-room-identifier="{{ room.identifier }}"
+                        title="Add to my rooms!"></span>
+                {% endif %}
+            </div>
+            <div class="input-group editable-field ml-3">
+                <input
+                    type="text"
+                    class="form-control-plaintext form-control form-control-lg font-weight-bold"
+                    id="input-room-description"
+                    placeholder="Room description"
+                    value="{{ room.description or '' }}"
+                    data-mode="view"
+                    size="40"
+                    readonly="readonly"/>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-dark">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row justify-content-end mb-3">
+        {{ paginator('web.room', pagination) }}
+    </div>
+    {% if room_people %}
+        {{ list_people(room_people) }}
+    {% else %}
+        <div>
+            <a href="{{ url_for('web.rooms') }}" class="text-center">
+                <h5>No Results
+                </h5>
+            </a>
+        </div>
+    {% endif %}
+    <div class="row justify-content-end mt-3">
+        {{ paginator('web.room', pagination) }}
+    </div>
+{% endblock %}

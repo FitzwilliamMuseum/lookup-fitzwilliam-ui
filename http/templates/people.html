@@ -1,0 +1,49 @@
+{% extends "page.html" %}
+{% from 'components.html' import paginator with context %}
+{% from 'components.html' import list_people with context %}
+{% block title %}
+    People
+{% endblock %}
+{% block content %}
+    {% if tag_data %}
+        <h2>Search results for "{{ pagination.query }}"</h2>
+    {% elif pagination.query %}
+        <h2>People matching "{{ pagination.query }}"</h2>
+    {% else %}
+        <h2>All people</h2>
+    {% endif %}
+    <div class="row justify-content-end mb-3">
+        {{ paginator('web.people', pagination) }}
+    </div>
+    <div class="row">
+        {% if tag_data %}
+            <div class="col-sm-3 text-center">
+                {% for tag in tag_data %}
+                    <a
+                        href="{{ url_for('web.tag', name=tag.name) }}"
+                        class="btn btn-tag mb-2 text-center"
+                        title="{{ tag.description or '' }}">
+                        {{ tag.name }}
+                        <span class="ml-3 badge badge-secondary">{{ tag.count }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="{{ 'col-sm-9' if tag_data else 'col-12' }}">
+            {% if people_data %}
+                {{ list_people(people_data) }}
+            {% else %}
+                <div>
+                    <a href="{{ url_for('web.index') }}" class="text-center">
+                        <h5>No Results for
+                            <code>{{ pagination.query }}</code>
+                        </h5>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row justify-content-end mt-3">
+        {{ paginator('web.people', pagination) }}
+    </div>
+{% endblock %}
